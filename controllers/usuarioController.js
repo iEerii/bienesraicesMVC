@@ -1,0 +1,16 @@
+const formularioLogin = (require, response) => {
+    response.render('auth/login', {
+
+    })
+}
+
+const formularioRegistro = (require, response) => {
+    response.render('auth/registro', {
+
+    })
+}
+
+export {
+    formularioLogin,
+    formularioRegistro
+}
