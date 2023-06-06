@@ -1,9 +1,18 @@
-//const express = require('express'); common form
-import express from 'express'; //nueva forma ecm module
-import usuarioRoutes from './routes/usuarioRoutes.js'
+import express from 'express';
+import usuarioRoutes from './routes/usuarioRoutes.js';
+import db from './config/db.js'
+
 
 //crear la app
 const app = express();
+
+//Conexion a la bd
+try {
+    await db.authenticate();
+    console.log('Conexion correcta a la base de datos')
+} catch(error){
+    console.log(error)
+}
 
 //Habilitar pug
 app.set('view engine', 'pug');
