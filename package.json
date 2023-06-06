@@ -19,8 +19,11 @@
   "author": "Ericka Ponce",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.1.4",
     "express": "^4.18.2",
-    "pug": "^3.0.2"
+    "mysql2": "^3.3.3",
+    "pug": "^3.0.2",
+    "sequelize": "^6.32.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
