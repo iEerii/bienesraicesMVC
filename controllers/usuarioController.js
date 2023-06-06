@@ -6,7 +6,7 @@ const formularioLogin = (require, response) => {
 
 const formularioRegistro = (require, response) => {
     response.render('auth/registro', {
-        pagina: 'Crear cyuenta'
+        pagina: 'Crear Cuenta'
     })
 }
 
