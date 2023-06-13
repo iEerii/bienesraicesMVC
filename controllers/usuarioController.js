@@ -2,7 +2,6 @@ import { check, validationResult } from 'express-validator'
 import Usuario from '../models/Usuario.js'
 import { generarId } from '../helpers/tokens.js'
 import { emailRegistro } from '../helpers/emails.js'
-import { response } from 'express'
 
 const formularioLogin = (request, response) => {
     response.render('auth/login', {
@@ -12,7 +11,8 @@ const formularioLogin = (request, response) => {
 
 const formularioRegistro = (request, response) => {
     response.render('auth/registro', {
-        pagina: 'Crear Cuenta'
+        pagina: 'Crear Cuenta',
+        csrfToken: request.csrfToken()
     })
 }
 
@@ -32,6 +32,7 @@ const registrar = async (request, response) => {
         //errores
         return response.render('auth/registro', {
             pagina: 'Crear Cuenta',
+            csrfToken: request.csrfToken(),
             errores: resultado.array(),
             usuario: {
                 nombre: request.body.nombre,
@@ -45,6 +46,7 @@ const registrar = async (request, response) => {
     if (existeUsuario) {
         return response.render('auth/registro', {
             pagina: 'Crear Cuenta',
+            csrfToken: request.csrfToken(),
             errores: [{msg: 'El Usuario ya está Registrado'}],
             usuario: {
                 nombre: request.body.nombre,
@@ -76,13 +78,29 @@ const registrar = async (request, response) => {
 }
 
 //Funcion que compureba una cuenta
-const confirmar = (request, response) => {
+const confirmar = async (request, response) => {
     const { token } = request.params;
-    console.log( token );
    
     //Verificar si el token es válido
+    const usuario = await Usuario.findOne({where: {token}})
+    
+    if(!usuario){
+        return response.render('auth/confirmar-cuenta', {
+            pagina: 'Error al confirmar tu cuenta',
+            mensaje: 'Hubo un error al confimar tu cuenta, intenta de nuevo',
+            error: true
+        })
+    }
 
     //Confirmar la cuenta
+    usuario.token = null;
+    usuario.confirmado = true;
+    await usuario.save();
+
+    response.render('auth/confirmar-cuenta', {
+            pagina: 'Cuenta confirmada',
+            mensaje: 'La cuenta se confirmó existosamente',
+        })
 }
 
 const formularioOlvidePassword = (request, response) => {
