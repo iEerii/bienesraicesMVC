@@ -28,7 +28,7 @@ app.use(express.static('public'));
 app.use('/auth', usuarioRoutes);
 
 //Definir un puerto y arrancar el proyecto
-const port = 8080;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`El servidor esta funcionando en el puerto ${port}`)
 });
