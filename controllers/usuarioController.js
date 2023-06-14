@@ -1,7 +1,7 @@
 import { check, validationResult } from 'express-validator'
 import Usuario from '../models/Usuario.js'
 import { generarId } from '../helpers/tokens.js'
-import { emailRegistro } from '../helpers/emails.js'
+import { emailRegistro, emailOlvidePassword } from '../helpers/emails.js'
 
 const formularioLogin = (request, response) => {
     response.render('auth/login', {
@@ -105,8 +105,61 @@ const confirmar = async (request, response) => {
 
 const formularioOlvidePassword = (request, response) => {
     response.render('auth/olvide-password', {
-        pagina: 'Recupera tu acceso a Bienes Raices'
+        pagina: 'Recupera tu acceso a Bienes Raices',
+        csrfToken: request.csrfToken()
     })
+}
+
+const resetPassword = async(request, response) => {
+   //Validacion
+    await check('email').isEmail().withMessage('¡Eso no parece un email!').run(request)
+   
+    let resultado = validationResult(request)
+    //Verificar que el resultado este vacío
+    if(!resultado.isEmpty()) {
+        return response.render('auth/olvide-password', {
+            pagina: 'Recupera tu acceso a Bienes Raices',
+            csrfToken: request.csrfToken(),
+            errores: resultado.array()
+        })
+    }
+
+    //Buscar al usuario
+    const {email} = request.body
+
+    const usuario = await Usuario.findOne({where: {email}})
+    if(!usuario){
+        return response.render('auth/olvide-password', {
+            pagina: 'Recupera tu acceso a Bienes Raices',
+            csrfToken: request.csrfToken(),
+            errores: [{msg:'El email no pertenece a ningun usuario'}]
+        })
+    }
+
+    //Generar un token y enviar el email
+    usuario.token = generarId();
+    await usuario.save();
+
+    //Envia un email
+    emailOlvidePassword({
+        email: usuario.email,
+        nombre: usuario.nombre,
+        token: usuario.token
+    })
+
+    //Renderizar un mensaje
+    response.render('templates/mensaje', {
+        pagina: 'Reestablece tu password',
+        mensaje: 'Hemos Enviado un Email con las instrucciones. Presiona en el enlace'
+    })
+}
+
+const comprobarToken = (request, response) => {
+    
+}
+
+const nuevoPassword = (request, response) => {
+
 }
 
 export {
@@ -114,5 +167,8 @@ export {
     formularioRegistro,
     registrar,
     confirmar,
-    formularioOlvidePassword
+    formularioOlvidePassword,
+    resetPassword,
+    comprobarToken,
+    nuevoPassword
 }
