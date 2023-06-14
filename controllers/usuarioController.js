@@ -1,4 +1,5 @@
 import { check, validationResult } from 'express-validator'
+import bcrypt from 'bcrypt'
 import Usuario from '../models/Usuario.js'
 import { generarId } from '../helpers/tokens.js'
 import { emailRegistro, emailOlvidePassword } from '../helpers/emails.js'
@@ -154,12 +155,59 @@ const resetPassword = async(request, response) => {
     })
 }
 
-const comprobarToken = (request, response) => {
-    
+const comprobarToken = async(request, response) => {
+    const {token} = request.params;
+
+    const usuario = await Usuario.findOne({where: {token}})
+    if(!usuario){
+        return response.render('auth/confirmar-cuenta', {
+            pagina: 'Reestablece tu Password',
+            mensaje: 'Hubo un error al validar tu información, intenta de nuevo',
+            error: true
+        })
+    }
+
+    //Mostrar formulario para modificar password
+    response.render('auth/reset-password', {
+        pagina: 'Reestablece tu password',
+        csrfToken: request.csrfToken()
+    })
+
 }
 
-const nuevoPassword = (request, response) => {
+const nuevoPassword = async (request, response) => {
+    //Validando password
+    await check('password').isLength({min:6}).withMessage('La contraseña debe tener al menos 6 caracteres').run(request)
 
+    let resultado = validationResult(request)
+    
+    //Verificar que el resultado este vacío
+    if(!resultado.isEmpty()) {
+        //errores
+        return response.render('auth/reset-password', {
+            pagina: 'Reestablece tu Password',
+            csrfToken: request.csrfToken(),
+            errores: resultado.array()
+        })
+    }
+
+    const {token} = request.params;
+    const {password} = request.body;
+
+    //Identificar quien hace el cambio
+    const usuario = await Usuario.findOnde({where: {token}})
+
+    //Hashear
+    const salt = await bcrypt.genSalt(10)
+    usuario.password = await bcrypt.hash(password, salt);
+    usuario.token = null;
+
+    await usuario.save()
+
+    response.render('auth/confirmar-cuenta', {
+        pagina: 'Password Reestablecido',
+        mensaje: 'El Password se guardó correctamente'
+    })
 }
 
 export {
