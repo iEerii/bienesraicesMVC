@@ -6,7 +6,12 @@ html(lang="es")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Bienes Raices | #{pagina}
         link(rel="stylesheet", href="/css/app.css")
+        block styles
     body.min-h-screen.bg-gray-50
+        header 
+            .container.mx-auto 
+                h1.text-2xl.text-white.font-extrabold.text-center Bienes 
+                    span.font-normal Raices
         if barra
             include header 
             
