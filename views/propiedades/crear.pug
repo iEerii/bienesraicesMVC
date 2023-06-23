@@ -5,7 +5,7 @@ block styles
 
 block contenido 
     .py-10
-        h1.bg-red-600.text-4xl.my-10.font-extrabold.text-center Bienes
+        h1.text-4xl.my-10.font-extrabold.text-center Bienes
             span.font-normal Raices 
         h2.text-center.text-2xl.font-extrabold= pagina
 
@@ -36,7 +36,6 @@ block contenido
                             select#habitaciones.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(name="habitaciones")
                                 option(value="") - Seleccione -
                                 - var n = 1
-                                select
                                     while n < 5
                                         option(value=n) #{n++}
 
@@ -45,7 +44,6 @@ block contenido
                             select#estacionamiento.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(name="estacionamiento")
                                 option(value="") - Seleccione -
                                 - var n = 1
-                                select
                                     while n < 4
                                         option(value=n) #{n++}
 
@@ -54,7 +52,6 @@ block contenido
                             select#wc.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(name="wc")
                                 option(value="") - Seleccione -
                                 - var n = 1
-                                select
                                     while n < 5
                                         option(value=n) #{n++}
 
