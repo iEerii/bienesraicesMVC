@@ -1,5 +1,8 @@
 extends ../layout/index
 
+block styles
+    link(rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css")
+
 block contenido 
     .py-10
         h1.text-4xl.my-10.font-extrabold.text-center Bienes
@@ -33,7 +36,6 @@ block contenido
                             select#habitaciones.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(name="habitaciones")
                                 option(value="") - Seleccione -
                                 - var n = 1
-                                select
                                     while n < 5
                                         option(value=n) #{n++}
 
@@ -42,7 +44,6 @@ block contenido
                             select#estacionamiento.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(name="estacionamiento")
                                 option(value="") - Seleccione -
                                 - var n = 1
-                                select
                                     while n < 4
                                         option(value=n) #{n++}
 
@@ -51,10 +52,21 @@ block contenido
                             select#wc.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(name="wc")
                                 option(value="") - Seleccione -
                                 - var n = 1
-                                select
                                     while n < 5
                                         option(value=n) #{n++}
+                    
+                    div.border-gray-200.border-t.py-5.space-y-8
+                        h3.text-lg.leading-6.font-medium.text-gray-900 Ubicación
+                        p.text-gray-600 Ubica la propiedad en el mapa
+                        #mapa.h-96
 
+                        div 
+                            //p.calle 
+                        
+                        input(type="hidden" name="calle" id="calle")
+                        input(type="hidden" name="lat" id="lat")
+                        input(type="hidden" name="lng" id="lng")
+                    
 block scripts
     script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js")
     script(src="https://unpkg.com/esri-leaflet@3.0.8/dist/esri-leaflet.js")
